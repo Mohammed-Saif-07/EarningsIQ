@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watcher-agent
+  namespace: earningsiq
+  labels:
+    agent: watcher
+    built-by: saif-mohammed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      agent: watcher
+  template:
+    metadata:
+      labels:
+        agent: watcher
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: watcher-agent
+          image: earningsiq/watcher-agent:latest
+          imagePullPolicy: IfNotPresent
+          command: ["uvicorn", "agents.watcher_agent:app", "--host", "0.0.0.0", "--port", "8080"]
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          envFrom:
+            - configMapRef:
+                name: earningsiq-config
+            - secretRef:
+                name: earningsiq-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10

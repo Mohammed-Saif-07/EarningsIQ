@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nlp-agent
+  namespace: earningsiq
+  labels:
+    agent: nlp
+    built-by: saif-mohammed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      agent: nlp
+  template:
+    metadata:
+      labels:
+        agent: nlp
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: nlp-agent
+          image: earningsiq/nlp-agent:latest
+          imagePullPolicy: IfNotPresent
+          command: ["uvicorn", "agents.nlp_agent:app", "--host", "0.0.0.0", "--port", "8080"]
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          envFrom:
+            - configMapRef:
+                name: earningsiq-config
+            - secretRef:
+                name: earningsiq-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10

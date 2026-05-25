@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: earningsiq-frontend
+  namespace: earningsiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: earningsiq-frontend
+  template:
+    metadata:
+      labels:
+        app: earningsiq-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: earningsiq/frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5173
+          env:
+            - name: VITE_API_BASE_URL
+              value: http://earningsiq-api:8000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"

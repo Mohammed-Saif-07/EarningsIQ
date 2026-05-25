@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: earningsiq-api
+  namespace: earningsiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: earningsiq-api
+  template:
+    metadata:
+      labels:
+        app: earningsiq-api
+    spec:
+      containers:
+        - name: api
+          image: earningsiq/api:latest
+          imagePullPolicy: IfNotPresent
+          command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          envFrom:
+            - configMapRef:
+                name: earningsiq-config
+            - secretRef:
+                name: earningsiq-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
