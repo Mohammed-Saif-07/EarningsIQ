@@ -2,7 +2,7 @@
 
 **What CFOs say, what the market misses.**
 
-EarningsIQ is a production-structured, zero-cost intelligence engine for SEC EDGAR earnings-call filings. It runs locally with Docker Compose, can be deployed to Minikube or k3s, and uses five LangGraph agents to ingest filings, score sentence sentiment with FinBERT, detect anomalous language, research context, and generate a structured signal report with Groq free tier or local Ollama.
+EarningsIQ is a production-structured,intelligence engine for SEC EDGAR earnings-call filings. It runs locally with Docker Compose, can be deployed to Minikube or k3s, and uses five LangGraph agents to ingest filings, score sentence sentiment with FinBERT, detect anomalous language, research context, and generate a structured signal report with Groq free tier or local Ollama.
 
 ## Architecture
 
