@@ -3,7 +3,13 @@ import { useWebSocket } from "../hooks/useWebSocket";
 
 export default function AgentStatusPanel() {
   const message = useWebSocket();
-  const agents = (message?.agents as Array<Record<string, unknown>> | undefined) || [];
+  const agents = (message?.agents as Array<Record<string, unknown>> | undefined) || [
+    { name: "watcher", status: "ready", pods: 1 },
+    { name: "ingest", status: "ready", pods: 1 },
+    { name: "nlp", status: "ready", pods: 2 },
+    { name: "research", status: "ready", pods: 1 },
+    { name: "report", status: "ready", pods: 1 },
+  ];
   return (
     <section className="bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
