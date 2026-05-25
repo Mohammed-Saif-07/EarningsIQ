@@ -143,10 +143,6 @@ npm install
 npm run dev
 ```
 
-## Resume Bullet
-
-*"Built EarningsIQ, a multi-agent AI system on Kubernetes - 5 LangGraph agents (Watcher, Ingest, NLP, Research, Report) each in isolated K8s pods, processing SEC EDGAR earnings transcripts via Apache Kafka, applying FinBERT sentiment analysis, Z-score anomaly detection, and LLaMA 3 signal generation across a partitioned PostgreSQL schema with materialized views, stored functions, and full-text search."*
-
 ---
 
 Built by Saif Mohammed · MS CS, Seattle University  
