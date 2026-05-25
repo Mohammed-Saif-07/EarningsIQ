@@ -77,3 +77,14 @@ class EdgarClient:
                 "The CFO said margin recovery should accelerate if volume returns in the second half."
             ),
         }
+
+
+def get_recent_filings(ticker: str = "AAPL") -> list[dict]:
+    """Return recent filing metadata using the same SEC client as the agents."""
+    filing = EdgarClient().latest_8k(ticker)
+    return [filing]
+
+
+def fetch_transcript_text(ticker: str = "AAPL") -> str:
+    """Return filing/transcript text for compatibility with smoke tests."""
+    return EdgarClient().latest_8k(ticker).get("text", "")

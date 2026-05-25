@@ -20,3 +20,8 @@ def zscore_anomalies(sentences: list[str], scores: list[float], threshold: float
                 "severity": severity,
             })
     return anomalies
+
+
+def detect_anomalies(scores: list[float], texts: list[str], threshold: float = 1.2) -> list[dict]:
+    """Compatibility wrapper for tests and notebooks."""
+    return zscore_anomalies(texts, scores, threshold)

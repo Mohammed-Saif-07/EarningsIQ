@@ -29,6 +29,28 @@ flowchart TB
 
 EarningsIQ does not claim to predict stock prices. It identifies language signals that can be missed in long earnings-call text, then compares those signals with price movement for validation. The output is decision support for research workflows, not financial advice.
 
+## Screenshots
+
+> Run `make up` then `make ingest TICKER=AAPL` to see the live dashboard.
+
+### Signal Leaderboard — Top anomalous companies this week
+![Signal Leaderboard](screenshots/leaderboard.png)
+
+### Sentiment Timeline — FinBERT score per sentence across earnings call
+![Sentiment Timeline](screenshots/sentiment_timeline.png)
+
+### Anomaly Cards — Flagged executive language with Z-score
+![Anomaly Cards](screenshots/anomaly_cards.png)
+
+### Transcript Viewer — Color-coded by sentiment score
+![Transcript Viewer](screenshots/transcript_viewer.png)
+
+### AI Q&A — Ask anything about the earnings call
+![QA Box](screenshots/qa_box.png)
+
+### Kubernetes Pod Status — All 5 agents running
+![K8s Pods](screenshots/k8s_pods.png)
+
 ## Quick Start
 
 ```bash
@@ -75,7 +97,7 @@ For Groq free tier:
 
 1. Create a free account at https://console.groq.com
 2. Create an API key.
-3. Open `/Users/mohammedsaif/Desktop/earningsiq/.env`.
+3. Open `.env` in the project root and fill in your keys.
 4. Set `LLM_PROVIDER=groq`.
 5. Paste the key into `GROQ_API_KEY=...`.
 6. Keep `GROQ_MODEL=llama3-8b-8192`.
