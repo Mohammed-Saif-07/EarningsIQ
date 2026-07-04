@@ -74,6 +74,13 @@ info "Checking Kafka..."
 if docker compose exec -T kafka kafka-topics \
     --bootstrap-server kafka:9092 --list > /dev/null 2>&1; then
     pass "Kafka broker is reachable"
+    docker compose exec -T kafka kafka-topics \
+        --bootstrap-server kafka:9092 \
+        --create \
+        --if-not-exists \
+        --topic earnings-raw \
+        --partitions 1 \
+        --replication-factor 1 > /dev/null 2>&1 || true
 else
     fail "Kafka broker not reachable"
 fi
@@ -92,8 +99,14 @@ fi
 # CHECK 7 — FastAPI health endpoint
 # --------------------------------------------------------
 info "Checking FastAPI /health..."
-sleep 5
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health || true)
+HTTP_STATUS="000"
+for _ in $(seq 1 60); do
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health || true)
+    if [ "$HTTP_STATUS" = "200" ]; then
+        break
+    fi
+    sleep 2
+done
 if [ "$HTTP_STATUS" = "200" ]; then
     pass "FastAPI /health returned 200"
 else

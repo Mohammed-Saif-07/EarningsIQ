@@ -17,9 +17,14 @@ def sentiment(ticker: str) -> dict:
                     """
                     SELECT ss.sentence_index, ss.sentiment_score
                     FROM sentence_sentiments ss
-                    JOIN filings f ON f.id = ss.filing_id
-                    WHERE f.ticker = %s
-                    ORDER BY f.filed_at DESC, ss.sentence_index
+                    WHERE ss.filing_id = (
+                        SELECT id
+                        FROM filings
+                        WHERE ticker = %s
+                        ORDER BY filed_at DESC
+                        LIMIT 1
+                    )
+                    ORDER BY ss.sentence_index
                     LIMIT 200
                     """,
                     (ticker.upper(),),

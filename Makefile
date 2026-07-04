@@ -1,8 +1,12 @@
-.PHONY: up down logs ingest api frontend test sql demo-mode live-mode smoke test-imports screenshot-reminder k8s-up k8s-status k8s-logs k8s-down
+.PHONY: up up-detached down logs ingest process signals api frontend test sql demo-mode live-mode smoke test-imports screenshot-reminder k8s-up k8s-status k8s-logs k8s-down
 
 up:
 	test -f .env || cp .env.example .env
 	docker compose up --build
+
+up-detached:
+	test -f .env || cp .env.example .env
+	docker compose up -d --build
 
 down:
 	docker compose down
@@ -27,20 +31,26 @@ frontend:
 	cd frontend && npm install && npm run dev
 
 ingest:
-	python -m agents.orchestrator --ticker $(or $(TICKER),AAPL)
+	docker compose exec -T api python -m agents.orchestrator --ticker $(or $(TICKER),AAPL) --emit-kafka
+
+process:
+	docker compose exec -T api python -m agents.orchestrator --ticker $(or $(TICKER),AAPL)
+
+signals:
+	docker compose exec -T api python -m agents.orchestrator --ticker $(or $(TICKER),AAPL)
 
 sql:
-	psql "$$DATABASE_URL" -f sql/01_schema.sql -f sql/02_indexes.sql -f sql/03_partitioning.sql -f sql/04_views.sql -f sql/05_materialized_views.sql -f sql/06_functions.sql -f sql/07_triggers.sql -f sql/08_seed_data.sql
+	docker compose exec -T postgres psql -U earningsiq -d earningsiq -f /docker-entrypoint-initdb.d/01_schema.sql -f /docker-entrypoint-initdb.d/02_indexes.sql -f /docker-entrypoint-initdb.d/03_partitioning.sql -f /docker-entrypoint-initdb.d/04_views.sql -f /docker-entrypoint-initdb.d/05_materialized_views.sql -f /docker-entrypoint-initdb.d/06_functions.sql -f /docker-entrypoint-initdb.d/07_triggers.sql -f /docker-entrypoint-initdb.d/08_seed_data.sql
 
 # ── Testing ────────────────────────────────────────────────
 smoke:
 	@bash smoke_test.sh
 
 test:
-	@pytest tests/test_smoke.py -v --tb=short
+	@docker compose exec -T api pytest tests/test_smoke.py -v --tb=short
 
 test-imports:
-	@pytest tests/test_smoke.py -v -k "import" --tb=short
+	@docker compose exec -T api pytest tests/test_smoke.py -v -k "import" --tb=short
 
 # ── Screenshots helper ─────────────────────────────────────
 screenshot-reminder:

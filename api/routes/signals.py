@@ -14,10 +14,19 @@ def db_rows() -> list[dict]:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT ticker, COALESCE(signal, 'WATCH'), COALESCE(confidence, 72),
-                           COALESCE(price_delta_1d_pct, 0), COALESCE(price_delta_5d_pct, 0),
-                           COALESCE(total_anomalies, 0)
-                    FROM v_filing_summary
+                    SELECT ticker, signal, confidence, price_delta_1d_pct, price_delta_5d_pct, total_anomalies
+                    FROM (
+                        SELECT DISTINCT ON (ticker)
+                               ticker,
+                               COALESCE(signal, 'WATCH') AS signal,
+                               COALESCE(confidence, 72) AS confidence,
+                               COALESCE(price_delta_1d_pct, 0) AS price_delta_1d_pct,
+                               COALESCE(price_delta_5d_pct, 0) AS price_delta_5d_pct,
+                               COALESCE(total_anomalies, 0) AS total_anomalies,
+                               filed_at
+                        FROM v_filing_summary
+                        ORDER BY ticker, filed_at DESC
+                    ) latest
                     ORDER BY filed_at DESC
                     LIMIT 20
                     """

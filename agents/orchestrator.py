@@ -82,5 +82,6 @@ def run_pipeline(ticker: str = "AAPL", emit_kafka: bool = False) -> AgentState:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--ticker", default="AAPL")
+    parser.add_argument("--emit-kafka", action="store_true", help="Publish transcript chunks to Kafka when USE_KAFKA=true.")
     args = parser.parse_args()
-    print(json.dumps(run_pipeline(args.ticker), indent=2))
+    print(json.dumps(run_pipeline(args.ticker, emit_kafka=args.emit_kafka), indent=2))
