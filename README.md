@@ -100,7 +100,7 @@ For Groq free tier:
 3. Open `.env` in the project root and fill in your keys.
 4. Set `LLM_PROVIDER=groq`.
 5. Paste the key into `GROQ_API_KEY=...`.
-6. Keep `GROQ_MODEL=llama3-8b-8192`.
+6. Keep `GROQ_MODEL=llama-3.3-70b-versatile`.
 
 For Kubernetes demos:
 

@@ -12,6 +12,8 @@ class AgentState(TypedDict):
     anomalies: list[dict]
     company_context: str
     signal_report: str
+    signal: str
+    confidence: int
     price_delta_1d: float
     price_delta_5d: float
     error: Optional[str]

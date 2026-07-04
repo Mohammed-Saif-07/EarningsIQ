@@ -59,6 +59,8 @@ def run_pipeline(ticker: str = "AAPL", emit_kafka: bool = False) -> AgentState:
         "anomalies": [],
         "company_context": "",
         "signal_report": "",
+        "signal": "",
+        "confidence": 0,
         "price_delta_1d": 0.0,
         "price_delta_5d": 0.0,
         "error": None,

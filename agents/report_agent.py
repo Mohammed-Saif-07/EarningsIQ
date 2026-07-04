@@ -49,9 +49,16 @@ def report_node(state: dict) -> dict:
         text = f"SIGNAL: {signal}\nCONFIDENCE: {int(max(50, min(95, score + 35)))}\nKEY QUOTES: {' | '.join(quotes)}\nREASONING: Anomaly density and sentiment movement suggest the call deserves analyst review. Price impact is simulated for local validation."
     state["signal_report"] = text
     state["signal"] = signal
-    state["confidence"] = int(re.search(r"CONFIDENCE:\s*(\d+)", text).group(1)) if re.search(r"CONFIDENCE:\s*(\d+)", text) else int(max(50, min(95, score + 35)))
+    state["confidence"] = extract_confidence(text, int(max(50, min(95, score + 35))))
     persist_report_state(state, mean, score, high)
     return state
+
+
+def extract_confidence(report_text: str, fallback: int) -> int:
+    match = re.search(r"CONFIDENCE\D+(\d+(?:\.\d+)?)", report_text, flags=re.IGNORECASE)
+    if not match:
+        return fallback
+    return int(max(0, min(100, round(float(match.group(1))))))
 
 
 def persist_report_state(state: dict, sentiment_mean: float, signal_score: float, high_count: int) -> None:
