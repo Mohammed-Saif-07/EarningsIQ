@@ -16,18 +16,19 @@ def db_rows() -> list[dict]:
                     """
                     SELECT ticker, signal, confidence, price_delta_1d_pct, price_delta_5d_pct, total_anomalies
                     FROM (
-                        SELECT DISTINCT ON (ticker)
-                               ticker,
-                               COALESCE(signal, 'WATCH') AS signal,
-                               COALESCE(confidence, 72) AS confidence,
-                               COALESCE(price_delta_1d_pct, 0) AS price_delta_1d_pct,
-                               COALESCE(price_delta_5d_pct, 0) AS price_delta_5d_pct,
-                               COALESCE(total_anomalies, 0) AS total_anomalies,
-                               filed_at
-                        FROM v_filing_summary
-                        ORDER BY ticker, filed_at DESC
+                        SELECT DISTINCT ON (sr.ticker)
+                               sr.ticker,
+                               COALESCE(sr.signal, 'WATCH') AS signal,
+                               COALESCE(sr.confidence, 72) AS confidence,
+                               COALESCE(sc.price_delta_1d_pct, 0) AS price_delta_1d_pct,
+                               COALESCE(sc.price_delta_5d_pct, 0) AS price_delta_5d_pct,
+                               COALESCE(sc.anomaly_count, 0) AS total_anomalies,
+                               sr.generated_at
+                        FROM signal_reports sr
+                        LEFT JOIN signal_correlations sc ON sc.filing_id = sr.filing_id
+                        ORDER BY sr.ticker, sr.generated_at DESC
                     ) latest
-                    ORDER BY filed_at DESC
+                    ORDER BY generated_at DESC
                     LIMIT 20
                     """
                 )

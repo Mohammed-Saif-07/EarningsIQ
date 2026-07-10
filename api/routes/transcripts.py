@@ -25,7 +25,7 @@ def get_transcript(ticker: str) -> dict:
                     SELECT accession_number, transcript_text
                     FROM filings
                     WHERE ticker = %s
-                    ORDER BY filed_at DESC
+                    ORDER BY updated_at DESC, created_at DESC
                     LIMIT 1
                     """,
                     (ticker.upper(),),

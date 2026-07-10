@@ -31,7 +31,7 @@ EarningsIQ does not claim to predict stock prices. It identifies language signal
 
 ## Screenshots
 
-> Run `make up` then `make ingest TICKER=AAPL` to see the live dashboard.
+> Run `make up` then `make ingest TICKER=AAPL` to pull live SEC EDGAR data, score it, and update the dashboard.
 
 ### Signal Leaderboard — Top anomalous companies this week
 ![Signal Leaderboard](screenshots/leaderboard.png)
@@ -65,7 +65,7 @@ Open:
 - API docs: http://localhost:8000/docs
 - Health: http://localhost:8000/health
 
-Run a local pipeline from another terminal:
+Run the live pipeline from another terminal:
 
 ```bash
 make ingest TICKER=AAPL
@@ -85,12 +85,14 @@ make k8s-up
 
 ## API Keys And Accounts
 
-You can run with no paid services. Default `.env` uses `LLM_PROVIDER=ollama`, which needs a local Ollama install:
+You can run with no paid services. Default `.env.example` is configured for the Groq free tier, live SEC EDGAR, Kafka, and CPU FinBERT:
 
 ```bash
-brew install ollama
-ollama serve
-ollama pull llama3
+LLM_PROVIDER=groq
+GROQ_MODEL=llama-3.3-70b-versatile
+USE_LIVE_EDGAR=true
+USE_FINBERT=true
+USE_KAFKA=true
 ```
 
 For Groq free tier:
@@ -101,6 +103,22 @@ For Groq free tier:
 4. Set `LLM_PROVIDER=groq`.
 5. Paste the key into `GROQ_API_KEY=...`.
 6. Keep `GROQ_MODEL=llama-3.3-70b-versatile`.
+
+To run without Groq, switch to local Ollama:
+
+```bash
+brew install ollama
+ollama serve
+ollama pull llama3
+```
+
+Then set:
+
+```bash
+LLM_PROVIDER=ollama
+```
+
+`demo-mode` is only a fallback for quick UI checks. The normal path is live SEC EDGAR + Kafka + FinBERT + Groq.
 
 For Kubernetes demos:
 

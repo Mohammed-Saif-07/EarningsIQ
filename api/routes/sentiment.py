@@ -21,7 +21,7 @@ def sentiment(ticker: str) -> dict:
                         SELECT id
                         FROM filings
                         WHERE ticker = %s
-                        ORDER BY filed_at DESC
+                        ORDER BY updated_at DESC, created_at DESC
                         LIMIT 1
                     )
                     ORDER BY ss.sentence_index
